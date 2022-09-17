@@ -34,8 +34,21 @@ skimr::skim(litters_df)
 ```
 
 
+## Options to read_csv
 
+This code means that you can skip the first 10 rows and don't show the columns' name.
 
+```{r}
+litters_df = read_csv("./data/FAS_litters.csv", skip =  10, col_names = FALSE)
+```
+
+This code means that these four content in file should be read as missing data.
+
+```{r}
+litters_df = read_csv("./data/FAS_litters.csv", na = c("", "NA", ".", 999))
+```
+
+check out '?read_csv' for more information.
 
 
 
