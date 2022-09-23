@@ -44,6 +44,8 @@ Select helpers
 
 ```{r}
 select(litters_df, starts_with("gd"))
+#select(litters_df, ends_with("weight"))
+#select(litters_df, contains("gd"))
 ```
 
 ```{r}
@@ -88,6 +90,18 @@ filter(litters_df, group %in% c('Con7','Mod8'))
 filter(litters_df, group == "Con7" & gd_of_birth == 20)
 ```
 
+```{r}
+filter(litters_df, group == "Con7" | gd_of_birth == 20)
+```
+
+## 'drop'
+
+```{r}
+drop_na(litters_df)  ##drop any rows with na
+
+drop_na(litters_df, gd0_weight)  ##drop rows for gd0_weight is na
+```
+
 ## 'mutate'
 
 ```{r}
@@ -100,11 +114,11 @@ mutate(
 ## 'arrange'
 
 ```{r}
-arrange(litters_df, pups_born_alive)
+arrange(litters_df, pups_born_alive)   ## make a 升序排序
 ```
 
 ```{r}
-arrange(litters_df, pups_born_alive, gd0_weight)
+arrange(litters_df, pups_born_alive, desc(gd0_weight))  ##desc 降序
 ```
 
 ## '%>%'
