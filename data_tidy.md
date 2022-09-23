@@ -77,3 +77,83 @@ pivot_wider(
     ##   <chr>     <dbl> <dbl>
     ## 1 treatment   4       8
     ## 2 placebo     3.5     4
+
+## Binding rows
+
+Using the LotR data.
+
+First step: import each table.
+
+``` r
+fellowship_ring = 
+  readxl::read_excel("./data/LotR_Words.xlsx", range = "B3:D6") %>% 
+  mutate(movie = 'fellowship_ring')
+
+two_towers = 
+  readxl::read_excel('./Data/LotR_Words.xlsx', range = 'F3:H6') %>% 
+  mutate(movie = 'two_towers')
+
+return_king = 
+  readxl::read_excel('./Data/LotR_Words.xlsx', range = 'J3:L6') %>% 
+  mutate(movie = 'return_king')
+```
+
+Bind all the rows together
+
+``` r
+lotr_tidy = 
+  bind_rows(fellowship_ring, two_towers, return_king) %>% 
+  janitor::clean_names() %>% 
+  relocate(movie) %>% 
+  pivot_longer(
+    female:male,
+    names_to = 'gender',
+    values_to = 'words',
+  )
+```
+
+## Joining dataset
+
+Import and clean the FAS datasets.
+
+``` r
+pups_df = 
+  read_csv('./data/FAS_pups.csv') %>% 
+  janitor::clean_names() %>% 
+  mutate(sex = recode(sex, `1` = 'male', `2`  = 'female'))
+```
+
+    ## Rows: 313 Columns: 6
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (1): Litter Number
+    ## dbl (5): Sex, PD ears, PD eyes, PD pivot, PD walk
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+litters_df = 
+  read_csv('./data/FAS_litters.csv') %>% 
+  janitor::clean_names() %>% 
+  relocate(litter_number) %>% 
+  separate(group, into = c('dose','day_of_tx'), sep = 3)
+```
+
+    ## Rows: 49 Columns: 8
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (2): Group, Litter Number
+    ## dbl (6): GD0 weight, GD18 weight, GD of Birth, Pups born alive, Pups dead @ ...
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+## Next, time to join them!
+
+``` r
+fas_df =
+  left_join(pups_df, litters_df, by = "litter_number") %>% 
+  arrange(litter_number) %>%
+  relocate(litter_number, dose, day_of_tx)
+```
